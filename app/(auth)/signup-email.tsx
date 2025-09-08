@@ -1,9 +1,10 @@
 // app/(auth)/signup-email.tsx
+import { emailCheckRequest } from "@/apis/authApis";
 import { useTheme } from "@/theme/ThemeProvider";
 import { ThemedInput, ThemedText, ThemedView } from "@/theme/Themed";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Alert, Pressable, StyleSheet, View } from "react-native";
 
 // 합리적인 이메일 패턴 (대소문자 무시)
 // - local: 영문/숫자/._%+-
@@ -52,9 +53,17 @@ export default function SignUpEmail() {
 		setPwErr(pErr);
 		if (eErr || pErr) return;
 
-		router.push({
-			pathname: "/(auth)/signup-profile",
-			params: { role, email, password },
+		emailCheckRequest(email).then((response) => {
+			if (response.status === "success") {
+				Alert.alert(response.message);
+				router.push({
+					pathname: "/(auth)/signup-profile",
+					params: { role, email, password },
+				});
+			} else {
+				Alert.alert(response.message);
+				return;
+			}
 		});
 	};
 

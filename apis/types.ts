@@ -1,0 +1,19 @@
+export interface ApiResponse<T> {
+	status: "success" | "failed";
+	message: string;
+	data: T;
+}
+
+export interface SigninData {
+	email: string;
+	password: string;
+}
+
+export interface SignupData {
+	email: string;
+	password: string;
+	username: string;
+	roleType: string;
+	age: number;
+	profileImg: string;
+}
