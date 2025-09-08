@@ -1,28 +1,19 @@
-import { SafeAreaView, StyleSheet, Text } from "react-native";
-
-export default function HomeScreen() {
+// app/(tabs)/index.tsx
+import { Link } from "expo-router";
+import { Button, Text, View } from "react-native";
+export default function Home() {
 	return (
-		<SafeAreaView>
-			<Text>홈</Text>
-		</SafeAreaView>
+		<View
+			style={{
+				flex: 1,
+				alignItems: "center",
+				justifyContent: "center",
+				gap: 12,
+			}}
+		>
+			<Text style={{ fontSize: 22, fontWeight: "700" }}>홈</Text>
+			<Button title="참기 (예시)" onPress={() => {}} />
+			<Link href="/supporter/link">서포터: 챌린저 검색</Link>
+		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	titleContainer: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 8,
-	},
-	stepContainer: {
-		gap: 8,
-		marginBottom: 8,
-	},
-	reactLogo: {
-		height: 178,
-		width: 290,
-		bottom: 0,
-		left: 0,
-		position: "absolute",
-	},
-});
