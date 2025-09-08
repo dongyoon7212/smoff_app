@@ -1,6 +1,7 @@
 // app/supporter/link.tsx
 import { useState } from "react";
-import { FlatList, SafeAreaView, Text, TextInput, View } from "react-native";
+import { FlatList, Text, TextInput, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 export default function SupporterLink() {
 	const [q, setQ] = useState("");
 	return (
