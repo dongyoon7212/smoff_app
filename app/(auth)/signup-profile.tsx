@@ -2,6 +2,7 @@
 import { signupRequest, usernameCheckRequest } from "@/apis/authApis";
 import { useTheme } from "@/theme/ThemeProvider";
 import { ThemedInput, ThemedText, ThemedView } from "@/theme/Themed";
+import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { Alert, Pressable, StyleSheet, View } from "react-native";
@@ -38,7 +39,10 @@ export default function SignUpProfile() {
 	};
 
 	const onSubmit = () => {
-		if (!validate()) return;
+		if (!validate()) {
+			Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+			return;
+		}
 		// TODO: /auth/signup 연동 후 성공 시 아래로 이동
 		usernameCheckRequest(username).then((response) => {
 			if (response.status === "success") {
@@ -51,16 +55,23 @@ export default function SignUpProfile() {
 					profileImg: profileImgUrl,
 				}).then((response) => {
 					if (response.status === "success") {
+						Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
 						router.replace({
 							pathname: "/(auth)/verify-email",
 							params: { email }, // ✅ age도 함께 전달(선택)
 						});
 					} else {
+						Haptics.notificationAsync(
+							Haptics.NotificationFeedbackType.Error
+						);
 						Alert.alert(response.message);
 						return;
 					}
 				});
 			} else {
+				Haptics.notificationAsync(
+					Haptics.NotificationFeedbackType.Error
+				);
 				Alert.alert(response.message);
 				return;
 			}

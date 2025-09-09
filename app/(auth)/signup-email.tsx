@@ -2,6 +2,7 @@
 import { emailCheckRequest } from "@/apis/authApis";
 import { useTheme } from "@/theme/ThemeProvider";
 import { ThemedInput, ThemedText, ThemedView } from "@/theme/Themed";
+import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { Alert, Pressable, StyleSheet, View } from "react-native";
@@ -51,16 +52,22 @@ export default function SignUpEmail() {
 		const pErr = validatePassword(password);
 		setEmailErr(eErr);
 		setPwErr(pErr);
-		if (eErr || pErr) return;
+		if (eErr || pErr) {
+			Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+			return;
+		}
 
 		emailCheckRequest(email).then((response) => {
 			if (response.status === "success") {
-				Alert.alert(response.message);
+				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
 				router.push({
 					pathname: "/(auth)/signup-profile",
 					params: { role, email, password },
 				});
 			} else {
+				Haptics.notificationAsync(
+					Haptics.NotificationFeedbackType.Error
+				);
 				Alert.alert(response.message);
 				return;
 			}

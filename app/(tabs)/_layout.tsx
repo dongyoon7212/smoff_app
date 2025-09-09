@@ -2,13 +2,12 @@ import { Tabs } from "expo-router";
 import React from "react";
 
 import { HapticTab } from "@/components/HapticTab";
+import { useAuth } from "@/stores/useAuth";
 import { useTheme } from "@/theme/ThemeProvider";
 
 export default function TabLayout() {
 	const { theme } = useTheme();
-
-	const isLoggedIn = false;
-
+	const authed = useAuth((s) => !!s.accessToken);
 	return (
 		<Tabs
 			screenOptions={{
@@ -29,14 +28,14 @@ export default function TabLayout() {
 				name="my"
 				options={{
 					title: "마이페이지",
-					href: isLoggedIn ? undefined : null,
+					href: authed ? undefined : null,
 				}}
 			/>
 			<Tabs.Screen
 				name="login"
 				options={{
 					title: "로그인",
-					href: isLoggedIn ? null : undefined,
+					href: authed ? null : undefined,
 				}}
 			/>
 		</Tabs>

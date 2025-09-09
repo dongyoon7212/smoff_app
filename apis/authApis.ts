@@ -1,4 +1,4 @@
-import { SignupData } from "./types";
+import { SigninData, SignupData } from "./types";
 import { instance } from "./utils";
 
 export const emailCheckRequest = async (email: string) => {
@@ -22,6 +22,15 @@ export const usernameCheckRequest = async (username: string) => {
 export const signupRequest = async (data: SignupData) => {
 	try {
 		const response = await instance.post("/auth/signup", data);
+		return response.data;
+	} catch (error: any) {
+		return error.response;
+	}
+};
+
+export const signinRequest = async (data: SigninData) => {
+	try {
+		const response = await instance.post("/auth/signin", data);
 		return response.data;
 	} catch (error: any) {
 		return error.response;

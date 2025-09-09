@@ -1,6 +1,7 @@
 // app/(auth)/role-select.tsx (카드 한 개 예시)
 import { ThemedCard, ThemedText, ThemedView } from "@/theme/Themed";
 import { useTheme } from "@/theme/ThemeProvider";
+import * as Haptics from "expo-haptics";
 import { Link } from "expo-router";
 import { Pressable, StyleSheet } from "react-native";
 
@@ -15,7 +16,13 @@ export default function RoleSelect() {
 
 			<ThemedView style={styles.column}>
 				{/* Challenger */}
-				<Link href="/(auth)/signup-email?role=CHALLENGER" asChild>
+				<Link
+					href="/(auth)/signup-email?role=CHALLENGER"
+					asChild
+					onPress={() => {
+						Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+					}}
+				>
 					<Pressable
 						style={({ pressed }) => [
 							styles.pressable,
@@ -50,7 +57,13 @@ export default function RoleSelect() {
 				</Link>
 
 				{/* Supporter */}
-				<Link href="/(auth)/signup-email?role=SUPPORTER" asChild>
+				<Link
+					href="/(auth)/signup-email?role=SUPPORTER"
+					asChild
+					onPress={() => {
+						Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+					}}
+				>
 					<Pressable
 						style={({ pressed }) => [
 							styles.pressable,

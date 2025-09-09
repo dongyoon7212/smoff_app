@@ -1,9 +1,14 @@
 // app/(tabs)/login.tsx
+import { signinRequest } from "@/apis/authApis";
+import { useAuth } from "@/stores/useAuth";
 import { ThemedInput, ThemedText, ThemedView } from "@/theme/Themed";
 import { useTheme } from "@/theme/ThemeProvider";
-import { Link } from "expo-router";
+import { useMutation } from "@tanstack/react-query";
+import * as Haptics from "expo-haptics";
+import { Link, router } from "expo-router";
 import { useState } from "react";
 import {
+	Alert,
 	Platform,
 	PlatformColor,
 	Pressable,
@@ -19,6 +24,38 @@ export default function LoginScreen() {
 
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+
+	const signinMutation = useMutation({
+		mutationFn: signinRequest,
+		mutationKey: ["signin"],
+		onSuccess: (response) => {
+			if (response.status === "success") {
+				Haptics.notificationAsync(
+					Haptics.NotificationFeedbackType.Success
+				);
+				useAuth
+					.getState()
+					.setAuth(response.data.accessToken, response.data.user);
+				router.replace("/(tabs)");
+			} else {
+				Haptics.notificationAsync(
+					Haptics.NotificationFeedbackType.Error
+				);
+				Alert.alert("오류", response.message);
+				return;
+			}
+		},
+	});
+
+	const onLogin = () => {
+		if (!email || !password) {
+			Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+			Alert.alert("오류", "이메일과 비밀번호를 모두 입력하세요.");
+			return;
+		}
+
+		signinMutation.mutate({ email, password });
+	};
 
 	return (
 		<ThemedView style={[styles.container, { backgroundColor: theme.bg }]}>
@@ -40,7 +77,7 @@ export default function LoginScreen() {
 
 			<Pressable
 				style={[styles.loginBtn, { backgroundColor: theme.primary }]}
-				onPress={() => {}}
+				onPress={onLogin}
 			>
 				<ThemedText
 					style={(styles.loginBtnText, { color: theme.btnText })}

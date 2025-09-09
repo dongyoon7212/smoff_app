@@ -2,6 +2,7 @@
 import { sendVerifyEmailRequest, verifyEmailRequest } from "@/apis/mailApis";
 import { useTheme } from "@/theme/ThemeProvider";
 import { ThemedText, ThemedView } from "@/theme/Themed";
+import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -30,15 +31,20 @@ export default function VerifyEmail() {
 			setChecking(true);
 			const response = await sendVerifyEmailRequest({ email });
 			if (response.status === "success") {
+				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
 				setRequested(true);
 				Alert.alert(
 					"요청 완료",
 					"인증 메일을 보냈습니다. 메일함을 확인해 주세요."
 				);
 			} else {
+				Haptics.notificationAsync(
+					Haptics.NotificationFeedbackType.Error
+				);
 				Alert.alert("오류", response.message);
 			}
 		} catch (e) {
+			Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 			Alert.alert("오류", "인증 요청 중 문제가 발생했습니다.");
 		} finally {
 			setChecking(false);
@@ -51,6 +57,9 @@ export default function VerifyEmail() {
 			setChecking(true);
 			const response = await verifyEmailRequest(email);
 			if (response.status === "success") {
+				Haptics.notificationAsync(
+					Haptics.NotificationFeedbackType.Success
+				);
 				Alert.alert("회원가입 완료", "이메일 인증이 확인되었습니다.", [
 					{
 						text: "확인",
@@ -58,12 +67,16 @@ export default function VerifyEmail() {
 					},
 				]);
 			} else {
+				Haptics.notificationAsync(
+					Haptics.NotificationFeedbackType.Error
+				);
 				Alert.alert(
 					"인증 필요",
 					"아직 인증되지 않았습니다. 메일의 링크를 눌러 주세요."
 				);
 			}
 		} catch {
+			Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 			Alert.alert("오류", "인증 상태를 확인하는 중 문제가 발생했습니다.");
 		} finally {
 			setChecking(false);
@@ -76,12 +89,18 @@ export default function VerifyEmail() {
 			setResending(true);
 			const response = await sendVerifyEmailRequest({ email });
 			if (response.status === "success") {
+				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
 				setRequested(true);
 				Alert.alert("재전송 완료", "인증 메일을 다시 보냈습니다.");
 			} else {
+				Haptics.notificationAsync(
+					Haptics.NotificationFeedbackType.Error
+				);
+
 				Alert.alert("오류", response.message);
 			}
 		} catch {
+			Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 			Alert.alert("오류", "재전송 중 문제가 발생했습니다.");
 		} finally {
 			setResending(false);
