@@ -1,4 +1,5 @@
 // app/(auth)/verify-email.tsx
+import { sendVerifyEmailRequest, verifyEmailRequest } from "@/apis/mailApis";
 import { useTheme } from "@/theme/ThemeProvider";
 import { ThemedText, ThemedView } from "@/theme/Themed";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -19,20 +20,24 @@ export default function VerifyEmail() {
 	const router = useRouter();
 	const { theme } = useTheme();
 
-	const [checking, setChecking] = useState(false);
-	const [resending, setResending] = useState(false);
-	const [requested, setRequested] = useState(false); // ← 인증 요청 보냄 여부
+	const [checking, setChecking] = useState(false); // 프라이머리 버튼 로딩
+	const [resending, setResending] = useState(false); // 재전송 버튼 로딩
+	const [requested, setRequested] = useState(false); // 인증 요청 성공 여부
 
-	// 1) 인증 요청
+	// 1) 인증 요청: 완료될 때까지 스피너 노출, 성공 시 requested=true → 버튼 라벨 전환
 	const onRequest = async () => {
 		try {
 			setChecking(true);
-			// TODO: await api.post('/auth/email/request', { email });
-			setRequested(true); // 요청 성공 시 확인 단계로 전환
-			Alert.alert(
-				"요청 완료",
-				"인증 메일을 보냈습니다. 메일함을 확인해 주세요."
-			);
+			const response = await sendVerifyEmailRequest({ email });
+			if (response.status === "success") {
+				setRequested(true);
+				Alert.alert(
+					"요청 완료",
+					"인증 메일을 보냈습니다. 메일함을 확인해 주세요."
+				);
+			} else {
+				Alert.alert("오류", response.message);
+			}
 		} catch (e) {
 			Alert.alert("오류", "인증 요청 중 문제가 발생했습니다.");
 		} finally {
@@ -44,9 +49,8 @@ export default function VerifyEmail() {
 	const onCheck = async () => {
 		try {
 			setChecking(true);
-			// TODO: const { data } = await api.get('/auth/email/verified', { params: { email }});
-			const verified = true; // 실제 응답으로 교체
-			if (verified) {
+			const response = await verifyEmailRequest(email);
+			if (response.status === "success") {
 				Alert.alert("회원가입 완료", "이메일 인증이 확인되었습니다.", [
 					{
 						text: "확인",
@@ -66,13 +70,17 @@ export default function VerifyEmail() {
 		}
 	};
 
-	// 3) 인증 메일 재전송
+	// 3) 인증 메일 재전송: 요청 이후에만 표시. 진행 중엔 스피너
 	const onResend = async () => {
 		try {
 			setResending(true);
-			// TODO: await api.post('/auth/email/resend', { email });
-			Alert.alert("재전송 완료", "인증 메일을 다시 보냈습니다.");
-			setRequested(true); // 재전송 후에도 확인 단계 유지
+			const response = await sendVerifyEmailRequest({ email });
+			if (response.status === "success") {
+				setRequested(true);
+				Alert.alert("재전송 완료", "인증 메일을 다시 보냈습니다.");
+			} else {
+				Alert.alert("오류", response.message);
+			}
 		} catch {
 			Alert.alert("오류", "재전송 중 문제가 발생했습니다.");
 		} finally {
@@ -105,7 +113,7 @@ export default function VerifyEmail() {
 						: "‘인증 요청’을 누르면 인증 메일을 보냅니다."}
 				</ThemedText>
 
-				{/* 1차 버튼: 인증 요청 → (요청 후) 인증 확인 */}
+				{/* 프라이머리: 요청 중/확인 중엔 스피너, 완료되면 라벨/동작 전환 */}
 				<Pressable
 					onPress={primaryHandler}
 					disabled={checking}
@@ -129,7 +137,7 @@ export default function VerifyEmail() {
 					)}
 				</Pressable>
 
-				{/* 2차 버튼: 인증 메일 재전송 — ✅ 인증 요청 이후에만 보이도록 */}
+				{/* 재전송: 최초엔 숨김, requested=true가 된 후 표시 */}
 				{requested && (
 					<Pressable
 						onPress={onResend}
@@ -145,7 +153,7 @@ export default function VerifyEmail() {
 						accessibilityRole="button"
 					>
 						{resending ? (
-							<ActivityIndicator color={theme.bg} />
+							<ActivityIndicator />
 						) : (
 							<ThemedText
 								style={[

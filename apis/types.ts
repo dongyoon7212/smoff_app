@@ -4,6 +4,10 @@ export interface ApiResponse<T> {
 	data: T;
 }
 
+export interface sendVerifyEmail {
+	email: string;
+}
+
 export interface SigninData {
 	email: string;
 	password: string;
