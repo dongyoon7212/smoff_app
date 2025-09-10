@@ -21,3 +21,8 @@ export interface SignupData {
 	age: number;
 	profileImg: string;
 }
+
+export interface AddPledgeData {
+	challengerId: number;
+	signatureImg: string;
+}
