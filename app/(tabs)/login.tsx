@@ -33,9 +33,14 @@ export default function LoginScreen() {
 				Haptics.notificationAsync(
 					Haptics.NotificationFeedbackType.Success
 				);
-				useAuth
-					.getState()
-					.setAuth(response.data.accessToken, response.data.user);
+				const { accessToken, user } = response.data;
+
+				// 전역 상태에 토큰/유저 저장 (미인증 사용자라도 메일 관련 API 호출할 수 있도록)
+				useAuth.getState().setAuth(accessToken, user);
+
+				Haptics.notificationAsync(
+					Haptics.NotificationFeedbackType.Success
+				);
 				router.replace("/(tabs)");
 			} else {
 				Haptics.notificationAsync(
