@@ -53,7 +53,6 @@ export default function PledgeScreen() {
 
 		try {
 			setSubmitting(true);
-			await uploadSignatureToFirebase(sig, Number(user.userId));
 			// 1) 파이어베이스에 이미지 업로드
 			const { url } = await uploadSignatureToFirebase(
 				sig,

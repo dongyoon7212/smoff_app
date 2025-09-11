@@ -109,6 +109,28 @@ export default function ProfileScreen() {
 						</ThemedText>
 					</View>
 				</ThemedCard>
+				{user?.roleType === "CHALLENGER" && (
+					<Pressable
+						onPress={() => router.push("/challenger/pledge-view")}
+						hitSlop={10}
+						style={[
+							styles.bigBtn,
+							{
+								backgroundColor: theme.primary,
+								borderColor: theme.border,
+							},
+						]}
+					>
+						<ThemedText
+							style={[
+								styles.bigBtnText,
+								{ color: theme.btnText },
+							]}
+						>
+							서약서 확인
+						</ThemedText>
+					</Pressable>
+				)}
 
 				{/* 역할 반대쪽 연결 버튼 */}
 				<Pressable
