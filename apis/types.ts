@@ -26,3 +26,8 @@ export interface AddPledgeData {
 	challengerId: number;
 	signatureImg: string;
 }
+
+export interface updateUsernameData {
+	userId: number;
+	username: string;
+}

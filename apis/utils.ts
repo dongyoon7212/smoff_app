@@ -2,7 +2,7 @@ import { useAuth } from "@/stores/useAuth";
 import axios from "axios";
 
 export const instance = axios.create({
-	baseURL: "http://192.168.0.53:8080",
+	baseURL: "http://192.168.7.61:8080",
 	headers: {
 		"Content-Type": "application/json",
 	},

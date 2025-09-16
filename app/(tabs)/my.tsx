@@ -51,10 +51,7 @@ export default function ProfileScreen() {
 
 	const onChangeUsername = () => {
 		setSheetVisible(false);
-		Alert.alert(
-			"사용자 이름 변경",
-			"닉네임 수정 화면으로 이동하도록 연결하세요."
-		);
+		router.push("/profile/edit-username");
 	};
 
 	const profileUri =

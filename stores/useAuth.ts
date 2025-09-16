@@ -3,6 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+// 👇 오타 수정 (roldId -> roleId)
 type UserRole = {
 	userRoleId: number;
 	userId: number;
@@ -10,11 +11,12 @@ type UserRole = {
 	createDt: string;
 	updateDt: string;
 	role: {
-		roldId: number;
+		roleId: number;
 		roleName: string;
 		roleNameKor: string;
 	};
 };
+
 type User = {
 	userId: number;
 	email: string;
@@ -31,6 +33,11 @@ type AuthState = {
 	hydrated: boolean;
 	setAuth: (token: string, user?: User) => void;
 	clearAuth: () => void;
+	setUser: (
+		patch:
+			| Partial<NonNullable<User>>
+			| ((u: NonNullable<User>) => NonNullable<User>)
+	) => void; // 👈 추가
 	_setHydrated: (v: boolean) => void;
 };
 
@@ -50,18 +57,28 @@ export const useAuth = create<AuthState>()(
 			setAuth: (token, user) =>
 				set({ accessToken: token, user: user ?? get().user }),
 			clearAuth: () => set({ accessToken: null, user: null }),
+
+			// ✅ user만 안전하게 부분 업데이트
+			setUser: (patch) =>
+				set((s) => {
+					if (!s.user) return {}; // 로그인 전이면 무시
+					const next =
+						typeof patch === "function"
+							? patch(s.user as NonNullable<User>)
+							: { ...(s.user as NonNullable<User>), ...patch };
+					return { user: next };
+				}),
+
 			_setHydrated: (v) => set({ hydrated: v }),
 		}),
 		{
 			name: "auth",
 			storage: createJSONStorage(() => ({
-				// JSON 래핑 (문자열 저장)
 				getItem: async (k) => (await storage.getItem(k)) ?? null,
 				setItem: async (k, v) => storage.setItem(k, v),
 				removeItem: async (k) => storage.removeItem(k),
 			})),
 			partialize: (s) => ({ accessToken: s.accessToken, user: s.user }),
-			// ✅ 하이드레이션 콜백으로 hydrated 플래그 세팅
 			onRehydrateStorage: () => (state) => state?._setHydrated(true),
 		}
 	)
