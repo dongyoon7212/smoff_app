@@ -34,10 +34,7 @@ export default function ProfileScreen() {
 
 	const onChangePassword = () => {
 		setSheetVisible(false);
-		Alert.alert(
-			"비밀번호 변경",
-			"비밀번호 변경 화면으로 이동하도록 연결하세요."
-		);
+		router.push("/profile/change-password");
 		// router.push("/(tabs)/change-password") 등으로 연결
 	};
 

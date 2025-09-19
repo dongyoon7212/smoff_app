@@ -31,3 +31,9 @@ export interface updateUsernameData {
 	userId: number;
 	username: string;
 }
+
+export interface changePasswordData {
+	userId: number;
+	oldPassword: string;
+	newPassword: string;
+}

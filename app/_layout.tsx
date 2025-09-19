@@ -50,6 +50,7 @@ function ThemedRoot() {
 					<Stack.Screen name="challenger/pledge" />
 					<Stack.Screen name="supporter/link" />
 					<Stack.Screen name="profile/edit-username" />
+					<Stack.Screen name="profile/change-password" />
 					<Stack.Screen name="+not-found" />
 				</Stack>
 
