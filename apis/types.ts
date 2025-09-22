@@ -37,3 +37,8 @@ export interface changePasswordData {
 	oldPassword: string;
 	newPassword: string;
 }
+
+export interface changeProfileImgData {
+	userId: number;
+	profileImg: String;
+}
